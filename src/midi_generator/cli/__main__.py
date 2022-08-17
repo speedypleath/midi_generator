@@ -1,6 +1,9 @@
 import argparse
 from cmath import log
+from io import DEFAULT_BUFFER_SIZE
 import logging
+
+from ..utils.constants import DEFAULT_RATES
 
 from ..utils.note import Scale, match_key, match_mode
 from ..utils import powerset, NOTE_DURATIONS
@@ -78,7 +81,7 @@ def print_cli():
                     type=set[float], 
                     metavar='set[float]',
                     help='the note lengths used to generate the MIDI file', 
-                    default={1/4, 1/8})
+                    default=set(DEFAULT_RATES))
 
     generate_seq.add_argument('--scale',
                     type=str,
@@ -96,7 +99,7 @@ def print_cli():
                     type=float,
                     metavar='float',
                     help='the level of syncopation in the generated MIDI file',
-                    default=0.3)
+                    default=0.1)
 
     generate_seq.add_argument('--ispolyphonic', 
                     action='store_true',
@@ -141,7 +144,7 @@ def print_cli():
 
                 if args.rates not in powerset(NOTE_DURATIONS):
                     logging.warning(' rates not in powerset of note durations, using default rates\n')
-                    args.rates = [1 / 4, 1 / 8]
+                    args.rates = DEFAULT_RATES
                 else: 
                     args.rates = list(args.rates)
 
