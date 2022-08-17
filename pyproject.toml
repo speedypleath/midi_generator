@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "midi_generator"
 description = "MIDI Generator for Python using genetic algorithms"
-version = "0.0.9"
+version = "0.1.0"
 authors = [
   { name = "Gheorghe Andrei", email = "gheorgheandrei13@gmail.com" },
 ]
@@ -39,5 +39,5 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["midi_generator"]
+include = ["midi_generator*",]
 exclude = ["midi_generator.tests*"]
