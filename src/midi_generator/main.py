@@ -6,7 +6,7 @@ from .config import Configuration
 from .genetic import generator, fitness, mutation, check_remaining_ticks, individual_to_melody
 from deap import base, creator, tools, algorithms
 
-from output import write_file
+from utils.output import write_file
 
 
 def ea_simple_with_elitism(population, toolbox, cxpb, mutpb, ngen, stats=None,

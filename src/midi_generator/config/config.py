@@ -1,10 +1,5 @@
 from dataclasses import field
-from .note import *
-
-LOOP_WAIT = 1.0 / 200  # 200 Hz
-BEATS_PER_BAR = 4
-MIDI_EVENT_NOTE_ON = 0x90
-
+from ..utils.note import *
 
 @dataclass
 class Configuration:

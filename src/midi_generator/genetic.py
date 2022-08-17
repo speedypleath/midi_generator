@@ -1,12 +1,12 @@
-from itertools import takewhile, compress, accumulate
-from typing import Tuple
+from itertools import takewhile, accumulate
 
-from .config import Configuration, BEATS_PER_BAR
-from .note import Note
+from .config import Configuration
+from .utils.constants import BEATS_PER_BAR
+from .utils.note import Note
 from dataclasses import dataclass
 import random
 
-from .syncopation import weighted_note_to_beat, density
+from .utils.syncopation import weighted_note_to_beat, density
 
 
 @dataclass
