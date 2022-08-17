@@ -1,4 +1,4 @@
-from midi_generator.note import Note
+from .note import Note
 from math import floor
 
 

@@ -1,5 +1,5 @@
 from dataclasses import field
-from midi_generator.note import *
+from .note import *
 
 LOOP_WAIT = 1.0 / 200  # 200 Hz
 BEATS_PER_BAR = 4

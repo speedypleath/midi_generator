@@ -1,12 +1,12 @@
 from itertools import takewhile, compress, accumulate
 from typing import Tuple
 
-from midi_generator.config import Configuration, BEATS_PER_BAR
-from midi_generator.note import Note
+from .config import Configuration, BEATS_PER_BAR
+from .note import Note
 from dataclasses import dataclass
 import random
 
-from midi_generator.syncopation import weighted_note_to_beat, density
+from .syncopation import weighted_note_to_beat, density
 
 
 @dataclass

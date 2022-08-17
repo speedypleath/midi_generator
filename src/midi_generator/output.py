@@ -1,8 +1,8 @@
 from simplecoremidi import MIDISource
 from midiutil import MIDIFile
 from time import sleep
-from midi_generator.config import MIDI_EVENT_NOTE_ON
-from midi_generator.note import Note
+from .config import MIDI_EVENT_NOTE_ON
+from .note import Note
 
 
 def play(notes: list[Note]):

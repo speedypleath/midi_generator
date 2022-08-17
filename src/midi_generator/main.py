@@ -2,8 +2,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-from midi_generator.config import Configuration
-from midi_generator.genetic import generator, fitness, mutation, check_remaining_ticks, individual_to_melody
+from .config import Configuration
+from .genetic import generator, fitness, mutation, check_remaining_ticks, individual_to_melody
 from deap import base, creator, tools, algorithms
 
 from output import write_file
