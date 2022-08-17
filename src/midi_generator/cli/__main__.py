@@ -5,7 +5,7 @@ import logging
 from ..utils.note import Scale, match_key, match_mode
 from ..utils import powerset, NOTE_DURATIONS
 from ..config import Configuration, parse_config_for_generate
-from commands import generate, mutate, continue_sequence
+from .commands import generate, mutate, continue_sequence
 
 class CustomParser(argparse.ArgumentDefaultsHelpFormatter):
     def __init__(self, *args, **kwargs):
@@ -90,7 +90,7 @@ def print_cli():
                     type=float,
                     metavar='float',
                     help='the density of notes in the generated MIDI file',
-                    default=0.4)
+                    default=0.8)
 
     generate_seq.add_argument('--syncopation',
                     type=float,
@@ -161,7 +161,7 @@ def print_cli():
                 config = parse_config_for_generate(args.config)
             logging.debug(' configuration: %s\n', config)
 
-            return generate(config)
+            generate(config)
 
         case 'mutate':
             return mutate(args.file)
