@@ -2,13 +2,13 @@ from itertools import takewhile, accumulate
 
 from .config import Configuration
 from .utils.constants import BEATS_PER_BAR
-from .utils.note import Note
 from dataclasses import dataclass
 import random
 from deap import algorithms, tools
 
 from .utils.syncopation import weighted_note_to_beat, density
 
+from note import Note
 
 @dataclass
 class Gene:

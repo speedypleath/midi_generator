@@ -26,11 +26,12 @@ dependencies = [
     "matplotlib",
     "seaborn",
     "deap",
-    "aenum"
+    "aenum",
+    "pytest"
 ]
 
 [project.scripts]
-midi-generator = "midi_generator.cli:print_cli"
+midi-generator = "midi_generator:cli.print_cli"
 
 [project.urls]
 "Homepage" = "https://github.com/speedypleath/midi-generator"
@@ -40,5 +41,5 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["midi_generator*",]
-exclude = ["midi_generator.tests*"]
+include = ["*",]
+exclude = [".tests*"]

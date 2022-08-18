@@ -2,7 +2,7 @@ from simplecoremidi import MIDISource
 from midiutil import MIDIFile
 from time import sleep
 from .constants import MIDI_EVENT_NOTE_ON
-from .note import Note
+from note import Note
 
 
 def play(notes: list[Note]):

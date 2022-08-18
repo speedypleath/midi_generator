@@ -24,14 +24,6 @@ class Mode(Enum):
 
 
 @dataclass(frozen=True)
-class Note:
-    pitch: int
-    velocity: int
-    start: float
-    end: float
-
-
-@dataclass(frozen=True)
 class Scale:
     notes: list[int]
 

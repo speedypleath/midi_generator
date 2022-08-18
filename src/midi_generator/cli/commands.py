@@ -1,10 +1,9 @@
 import logging
 from midi_generator.utils.output import write_file
-from ..utils import Note
+from note import Note
 from ..config import Configuration
 from deap import base, creator, tools
 from ..genetic import ea_simple_with_elitism, generator, fitness, mutation, check_remaining_ticks, individual_to_melody
-from ..utils import Note
 from ..config import Configuration
 import numpy as np
 
@@ -41,7 +40,9 @@ def generate(config: Configuration) -> list[Note]:
     logging.info('-- Best Ever Individual = %s\n', best)
     logging.info('-- Best Ever Fitness -- %s\n', best.fitness.values)
     
-    write_file(individual_to_melody(best), "best")
+    melody = individual_to_melody(best)
+    write_file(melody, "best")
+    return melody
 
 
 def mutate(sequence: list[Note]) -> list[Note]:
