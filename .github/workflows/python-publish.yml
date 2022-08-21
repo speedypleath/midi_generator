@@ -16,7 +16,7 @@ permissions:
 jobs:
   deploy:
 
-    runs-on: macos
+    runs-on: ubuntu-latest
 
     steps:
     - name: Set up Boost
