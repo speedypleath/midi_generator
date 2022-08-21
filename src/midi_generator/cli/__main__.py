@@ -5,7 +5,7 @@ import logging
 
 from ..utils.constants import DEFAULT_RATES
 
-from ..utils.note import Scale, match_key, match_mode
+from ..utils.scale import Scale, match_key, match_mode
 from ..utils import powerset, NOTE_DURATIONS
 from ..config import Configuration, parse_config_for_generate
 from .commands import generate, mutate, continue_sequence

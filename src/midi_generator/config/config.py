@@ -1,5 +1,5 @@
 from dataclasses import field, dataclass
-from note import Scale, Mode, Key
+from ..utils.scale import Scale, Mode, Key
 
 @dataclass
 class Configuration:

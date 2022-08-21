@@ -34,7 +34,7 @@ dependencies = [
 midi-generator = "midi_generator:cli.print_cli"
 
 [project.urls]
-"Homepage" = "https://github.com/speedypleath/midi-generator"
+"Homepage" = "https://github.com/speedypleath/midi_generator"
 
 [tool.setuptools]
 include-package-data = true
