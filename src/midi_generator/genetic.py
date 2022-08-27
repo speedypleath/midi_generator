@@ -26,7 +26,7 @@ class Individual:
 Population = list[Individual]
 
 
-def random_individual(config: Configuration):
+def random_individual(config: Configuration=Configuration()) -> Individual:
     durations = config.rate
     start = 0
     notes = []
@@ -121,7 +121,7 @@ def fitness(genes: list[Gene]) -> tuple[float, float]:
     return abs(weighted_note_to_beat(notes) - 0.35), abs(density(genes) - 0.8)
 
 
-def generator(config: Configuration):
+def generator(config: Configuration=Configuration()):
     prev_gene: Gene | None = None
 
     def create_random_gene() -> Gene:
