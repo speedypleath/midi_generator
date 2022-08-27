@@ -8,7 +8,7 @@ from ..config import Configuration
 import numpy as np
 
 
-def generate(config: Configuration) -> list[Note]:
+def generate(config: Configuration = Configuration()) -> list[Note]:
     toolbox = base.Toolbox()
     gene_generator = generator(config)
     toolbox.register("Note", gene_generator)
@@ -41,7 +41,6 @@ def generate(config: Configuration) -> list[Note]:
     logging.info('-- Best Ever Fitness -- %s\n', best.fitness.values)
     
     melody = individual_to_melody(best)
-    write_file(melody, "best")
     return melody
 
 
