@@ -3,7 +3,9 @@ from ..utils.scale import Scale, Mode, Key
 
 @dataclass
 class Configuration:
-    bars: int = 4
+    no_bars: int = 4
+    notes_per_bar: int = 4
+    ticks_per_note: int = 16
     density: float = 0.4
     rate: list[float] = field(default_factory=lambda: [1 / 4, 1 / 8])
     syncopation: float = 0.3

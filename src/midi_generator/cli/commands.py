@@ -1,20 +1,21 @@
 import logging
-from midi_generator.utils.output import write_file
 from note import Note
 from ..config import Configuration
 from deap import base, creator, tools
-from ..genetic import ea_simple_with_elitism, generator, fitness, mutation, check_remaining_ticks, individual_to_melody
+from ..genetic import ea_simple_with_elitism, generator, fitness, melody_to_individual, mutation, check_remaining_ticks, individual_to_melody
 from ..config import Configuration
 import numpy as np
+from midiutil import MIDIFile
+
+Sequence = list[Note]
 
 
-def generate(config: Configuration = Configuration()) -> list[Note]:
+def generate(config: Configuration = Configuration()) -> Sequence:
     toolbox = base.Toolbox()
-    gene_generator = generator(config)
-    toolbox.register("Note", gene_generator)
-    creator.create("FitnessComposed", base.Fitness, weights=(-1.0, -1.0))
-    creator.create("Individual", list, fitness=creator.FitnessComposed)
-    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.Note, n=32)
+    creator.create("Fitness", base.Fitness, weights=(-1.0, -1.0))
+    toolbox.register("generator", generator())
+    creator.create("Individual", list, fitness=creator.Fitness)
+    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.generator, n=32)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("evaluate", fitness)
     toolbox.register("select", tools.selStochasticUniversalSampling)
@@ -44,8 +45,23 @@ def generate(config: Configuration = Configuration()) -> list[Note]:
     return melody
 
 
-def mutate(sequence: list[Note]) -> list[Note]:
+def mutate(sequence: Sequence, config: Configuration = Configuration()) -> Sequence:
+    individual = melody_to_individual(sequence)
+    mutated, = mutation(config, individual)
+    return individual_to_melody(mutated)
+
+def continue_sequence(sequence: Sequence, config: Configuration = Configuration()) -> Sequence:
     pass
 
-def continue_sequence(sequence: list[Note]) -> list[Note]:
+def combine(sequence: Sequence, config: Configuration = Configuration()) -> Sequence:
     pass
+
+def write_file(notes: Sequence, path: str):
+    midi = MIDIFile(1)
+    midi.addTempo(0, 0, 120)
+
+    for note in notes:
+        midi.addNote(0, 0, note.pitch, note.start, note.end - note.start, note.velocity)
+
+    with open(f'{path}', "wb") as output_file:
+        midi.writeFile(output_file)

@@ -1,4 +1,4 @@
-from itertools import takewhile, accumulate
+from itertools import takewhile
 
 from .config import Configuration
 from .utils.constants import BEATS_PER_BAR
@@ -19,82 +19,11 @@ class Gene:
 
 @dataclass
 class Individual:
-    notes: list[Note]
-    fitness: tuple[float]
+    notes: list[Gene]
+    fitness: tuple[float,float] = (0,0)
 
 
 Population = list[Individual]
-
-
-def random_individual(config: Configuration=Configuration()) -> Individual:
-    durations = config.rate
-    start = 0
-    notes = []
-
-    while start < config.bars * BEATS_PER_BAR:
-        key = random.choice(list(config.scale.notes)[30:40])
-        velocity = random.randint(80, 100)
-        end = min(start + random.choice(durations) * BEATS_PER_BAR, config.bars * BEATS_PER_BAR)
-        notes.append(Note(key, velocity, start, end))
-        start = end
-
-    return Individual(notes, fitness(notes))
-
-
-def generate_population(config: Configuration):
-    return [random_individual(config) for i in range(40)]
-
-
-# def mutation(individual: Individual, config: Configuration) -> Individual:
-#     new_notes = []
-#     for note in individual.notes:
-#         change = random.random()
-#         if change > 0.2:
-#             new_end = min(note.start + random.choice(config.rate) * BEATS_PER_BAR, BEATS_PER_BAR * config.bars)
-#             new_start = note.start
-#             if len(new_notes) > 0 and not config.is_polyphonic and new_notes[-1].end > new_start:
-#                 new_start = new_notes[-1].end
-#             if new_start == new_end:
-#                 continue
-#             new_notes.append(Note(note.pitch, note.velocity, new_start, new_end))
-#         else:
-#             new_notes.append(Note(note.pitch, note.velocity, note.start, note.end))
-#
-#     return Individual(new_notes, fitness(new_notes))
-
-
-def single_point_crossover(population: Population, config: Configuration) -> Population:
-    max_notes = config.bars * (1 / min(config.rate)) * BEATS_PER_BAR
-    for a, b in zip(population[::2], population[1::2]):
-        change = random.random()
-        if change > 0.4:
-            cut = random.randint(0, max_notes) * min(config.rate)
-            child = list(takewhile(lambda note: note.start < cut, a.notes)) + \
-                list(takewhile(lambda note: note.start > cut, b.notes[::-1]))[::-1]
-            population.append(Individual(child, fitness(child)))
-
-    return population
-
-
-def uniform_crossover(population: Population, config: Configuration) -> Population:
-    max_notes = config.bars * (1 / min(config.rate)) * BEATS_PER_BAR
-    for a, b in zip(population[::2], population[1::2]):
-        change = random.random()
-        if change > 0.4:
-            part_a = [random.randint(0, 1)] * max_notes
-            part_b = [0 if x == 1 else 1 for x in part_a]
-            ...
-
-
-def roulette_wheel(population: Population, config: Configuration) -> Population:
-    new_population = []
-    for i in range(20):
-        probabilities = [0] + list(accumulate(map(lambda individual: individual.fitness, population)))
-        change = random.uniform(0, probabilities[-1])
-        index = len(list(takewhile(lambda x: x < change, probabilities)))
-        new_population.append(population[index])
-
-    return new_population
 
 
 def individual_to_melody(individual: list[Gene]) -> list[Note]:
@@ -114,6 +43,13 @@ def individual_to_melody(individual: list[Gene]) -> list[Note]:
             start = time
 
     return notes
+
+
+def melody_to_individual(melody: list[Note]) -> list[Gene]:
+    genes = []
+    for note in melody:
+        genes.extend([Gene(note.pitch, note.velocity, i) for i in range(note.duration)])
+    return genes
 
 
 def fitness(genes: list[Gene]) -> tuple[float, float]:
@@ -140,13 +76,13 @@ def generator(config: Configuration=Configuration()):
     return create_random_gene
 
 
-def mutation(config: Configuration, genes: list[Gene]):
-    for i, gene in enumerate(genes):
+def mutation(config: Configuration, genes: Individual):
+    for gene in genes:
         change = random.random()
         if change > 0.1:
             gene.pitch = random.choice(list(config.scale.notes)[30:40])
         change = random.random()
-        if change > 0.05 and gene.remaining_ticks == 1:
+        if change > 0.01 and gene.remaining_ticks == 1:
             gene.remaining_ticks = 0
     return genes,
 
