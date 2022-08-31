@@ -2,36 +2,25 @@ import logging
 from note import Note
 from ..config import Configuration
 from deap import base, creator, tools
-from ..genetic import ea_simple_with_elitism, generator, fitness, melody_to_individual, mutation, check_remaining_ticks, individual_to_melody
+from ..genetic import ea_simple_with_elitism, generator, fitness, melody_to_individual, mutation, \
+    check_remaining_ticks, individual_to_melody, create_config
 from ..config import Configuration
-import numpy as np
 from midiutil import MIDIFile
+import numpy as np
 
 Sequence = list[Note]
 
 
 def generate(config: Configuration = Configuration()) -> Sequence:
-    toolbox = base.Toolbox()
-    creator.create("Fitness", base.Fitness, weights=(-1.0, -1.0))
-    toolbox.register("generator", generator())
-    creator.create("Individual", list, fitness=creator.Fitness)
-    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.generator, n=32)
-    toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-    toolbox.register("evaluate", fitness)
-    toolbox.register("select", tools.selStochasticUniversalSampling)
-    toolbox.register("mutate", mutation, config)
-    toolbox.register("mate", tools.cxOnePoint)
-    toolbox.register("select", tools.selTournament, tournsize=3)
-    decorator = check_remaining_ticks()
-    toolbox.decorate("mate", decorator)
-    toolbox.decorate("mutate", decorator)
-    population = toolbox.population(100)
+    toolbox = create_config(config)
+
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("min", np.min)
     stats.register("avg", np.mean)
     stats.register("min_axis", np.min, axis=0)
     stats.register("avg_axis", np.mean, axis=0)
 
+    population = toolbox.population(100)
     hof = tools.HallOfFame(10)
     population, logbook = ea_simple_with_elitism(population, toolbox, cxpb=0.4, mutpb=0.2,
                                                  ngen=100, stats=stats, hall_of_fame=hof)
@@ -47,8 +36,12 @@ def generate(config: Configuration = Configuration()) -> Sequence:
 
 def mutate(sequence: Sequence, config: Configuration = Configuration()) -> Sequence:
     individual = melody_to_individual(sequence)
-    mutated, = mutation(config, individual)
-    return individual_to_melody(mutated)
+    toolbox = create_config(config)
+
+    mutant = toolbox.clone(individual)
+    ind, = toolbox.mutate(mutant)
+    melody = individual_to_melody(ind)
+    return melody
 
 def continue_sequence(sequence: Sequence, config: Configuration = Configuration()) -> Sequence:
     pass

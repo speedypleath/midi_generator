@@ -1,14 +1,16 @@
 from itertools import takewhile
 
 from .config import Configuration
-from .utils.constants import BEATS_PER_BAR
+import numpy as np
 from dataclasses import dataclass
 import random
-from deap import algorithms, tools
+from deap import base, creator, algorithms, tools
+
 
 from .utils.syncopation import weighted_note_to_beat, density
 
 from note import Note
+
 
 @dataclass
 class Gene:
@@ -20,7 +22,7 @@ class Gene:
 @dataclass
 class Individual:
     notes: list[Gene]
-    fitness: tuple[float,float] = (0,0)
+    fitness: tuple[float, float] = (0, 0)
 
 
 Population = list[Individual]
@@ -32,23 +34,23 @@ def individual_to_melody(individual: list[Gene]) -> list[Note]:
     time = 0.0
     for i, gene in enumerate(individual):
         time += 0.5
-        if gene.remaining_ticks > 1:
+
+        if gene.remaining_ticks >= 1:
             continue
 
-        if gene.remaining_ticks == 1:
-            notes.append(Note(gene.pitch, gene.velocity, start, time))
-            start = time
-
-        if gene.remaining_ticks == 0:
-            start = time
+        notes.append(Note(gene.pitch, gene.velocity, start, time))
+        start = time
 
     return notes
 
 
 def melody_to_individual(melody: list[Note]) -> list[Gene]:
-    genes = []
+    genes = [Gene(0, 0, 0)] * 32
     for note in melody:
-        genes.extend([Gene(note.pitch, note.velocity, i) for i in range(note.duration)])
+        ticks = int((note.end - note.start) * 2)
+        for i in range(ticks - 1, -1, -1):
+            genes[int(note.start * 2 + ticks - i - 1)] = Gene(note.pitch, note.velocity, i)
+    assert(len(genes) > 0)
     return genes
 
 
@@ -57,7 +59,7 @@ def fitness(genes: list[Gene]) -> tuple[float, float]:
     return abs(weighted_note_to_beat(notes) - 0.35), abs(density(genes) - 0.8)
 
 
-def generator(config: Configuration=Configuration()):
+def generator(config: Configuration = Configuration()):
     prev_gene: Gene | None = None
 
     def create_random_gene() -> Gene:
@@ -76,13 +78,13 @@ def generator(config: Configuration=Configuration()):
     return create_random_gene
 
 
-def mutation(config: Configuration, genes: Individual):
+def mutation(config: Configuration, genes):
     for gene in genes:
         change = random.random()
-        if change > 0.1:
+        if change > 0.9:
             gene.pitch = random.choice(list(config.scale.notes)[30:40])
         change = random.random()
-        if change > 0.01 and gene.remaining_ticks == 1:
+        if change > 0.9 and gene.remaining_ticks == 1:
             gene.remaining_ticks = 0
     return genes,
 
@@ -97,7 +99,9 @@ def check_remaining_ticks():
                         continue
                     gene.remaining_ticks = len(list(takewhile(lambda x: x.pitch == gene.pitch, genes[i:])))
             return offspring
+
         return wrapper
+
     return decorator
 
 
@@ -159,3 +163,21 @@ def ea_simple_with_elitism(population, toolbox, cxpb, mutpb, ngen, stats=None,
             print(logbook.stream)
 
     return population, logbook
+
+
+def create_config(config):
+    toolbox = base.Toolbox()
+    creator.create("Fitness", base.Fitness, weights=(-1.0, -1.0))
+    toolbox.register("generator", generator())
+    creator.create("Individual", list, fitness=creator.Fitness)
+    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.generator, n=32)
+    toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+    toolbox.register("evaluate", fitness)
+    toolbox.register("select", tools.selStochasticUniversalSampling)
+    toolbox.register("mutate", mutation, config)
+    toolbox.register("mate", tools.cxOnePoint)
+    toolbox.register("select", tools.selTournament, tournsize=3)
+    decorator = check_remaining_ticks()
+    toolbox.decorate("mate", decorator)
+    toolbox.decorate("mutate", decorator)
+    return toolbox
