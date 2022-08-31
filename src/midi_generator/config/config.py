@@ -3,7 +3,7 @@ from ..utils.scale import Scale, Mode, Key
 
 @dataclass
 class Configuration:
-    no_bars: int = 4
+    bars: int = 4
     notes_per_bar: int = 4
     ticks_per_note: int = 16
     density: float = 0.4
