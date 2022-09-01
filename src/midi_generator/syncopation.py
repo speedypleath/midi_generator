@@ -22,5 +22,11 @@ def weighted_note_to_beat(notes: list[Note]) -> float:
     return total / len(notes)
 
 
+def off_beatness(notes: list[Note]) -> float:
+    b = [x for x in filter(lambda i: len(notes) % i == 0, range(1, len(notes) + 1))]
+    weights = [0 if len(list(filter(lambda i: x % i == 0, b))) else 1 for x in notes]
+    return sum(weights) / len(notes)
+
+
 def density(notes) -> float:
-    return len(list(filter(lambda note: note.remaining_ticks != 0, notes))) / len(notes)
+    return len(list(filter(lambda note: note.velocity != 0, notes))) / len(notes)

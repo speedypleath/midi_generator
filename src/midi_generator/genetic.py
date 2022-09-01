@@ -1,13 +1,12 @@
 from itertools import takewhile
 
 from .config import Configuration
-import numpy as np
 from dataclasses import dataclass
 import random
 from deap import base, creator, algorithms, tools
 
 
-from .utils.syncopation import weighted_note_to_beat, density
+from src.midi_generator.syncopation import weighted_note_to_beat, density
 
 from note import Note
 
@@ -17,15 +16,6 @@ class Gene:
     pitch: int
     velocity: int
     remaining_ticks: int
-
-
-@dataclass
-class Individual:
-    notes: list[Gene]
-    fitness: tuple[float, float] = (0, 0)
-
-
-Population = list[Individual]
 
 
 def individual_to_melody(individual: list[Gene]) -> list[Note]:

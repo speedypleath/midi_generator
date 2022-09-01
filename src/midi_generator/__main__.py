@@ -1,14 +1,12 @@
 import argparse
-from cmath import log
-from io import DEFAULT_BUFFER_SIZE
 import logging
 
-from ..utils.constants import DEFAULT_RATES
+from src.midi_generator.constants import DEFAULT_RATES
 
-from ..utils.scale import Scale, match_key, match_mode
-from ..utils import powerset, NOTE_DURATIONS
-from ..config import Configuration, parse_config_for_generate
-from .commands import generate, mutate, continue_sequence
+from src.midi_generator.scale import Scale, match_key, match_mode
+from src.midi_generator.utils import powerset, NOTE_DURATIONS
+from src.midi_generator.config import Configuration, parse_config_for_generate
+from src.midi_generator.commands import generate, mutate, continue_sequence
 
 
 class CustomParser(argparse.ArgumentDefaultsHelpFormatter):

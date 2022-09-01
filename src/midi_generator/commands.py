@@ -1,17 +1,16 @@
 import logging
 from note import Note
-from ..config import Configuration
-from deap import base, creator, tools
-from ..genetic import ea_simple_with_elitism, generator, fitness, melody_to_individual, mutation, \
+from deap import tools
+from .genetic import ea_simple_with_elitism, generator, fitness, melody_to_individual, mutation, \
     check_remaining_ticks, individual_to_melody, create_config
-from ..config import Configuration
+from .config import Configuration
 from midiutil import MIDIFile
 import numpy as np
 
 Sequence = list[Note]
 
 
-def generate(config: Configuration = Configuration()) -> Sequence:
+def generate(config=Configuration()) -> Sequence:
     toolbox = create_config(config)
 
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -29,12 +28,12 @@ def generate(config: Configuration = Configuration()) -> Sequence:
     best = hof.items[0]
     logging.info('-- Best Ever Individual = %s\n', best)
     logging.info('-- Best Ever Fitness -- %s\n', best.fitness.values)
-    
+
     melody = individual_to_melody(best)
     return melody
 
 
-def mutate(sequence: Sequence, config: Configuration = Configuration()) -> Sequence:
+def mutate(sequence: Sequence, config=Configuration()) -> Sequence:
     individual = melody_to_individual(sequence)
     toolbox = create_config(config)
 
@@ -43,11 +42,14 @@ def mutate(sequence: Sequence, config: Configuration = Configuration()) -> Seque
     melody = individual_to_melody(ind)
     return melody
 
-def continue_sequence(sequence: Sequence, config: Configuration = Configuration()) -> Sequence:
+
+def continue_sequence(sequence: Sequence, config=Configuration()) -> Sequence:
     pass
+
 
 def combine(sequence: Sequence, config: Configuration = Configuration()) -> Sequence:
     pass
+
 
 def write_file(notes: Sequence, path: str):
     midi = MIDIFile(1)
