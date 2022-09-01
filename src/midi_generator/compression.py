@@ -2,7 +2,7 @@ from functools import reduce
 from itertools import takewhile, zip_longest
 
 
-def encode_lz77(string: str, window_size=100):
+def encode_lz77(string: list, window_size=100):
     encoded = string[: window_size + 1]
     i = window_size
     while i < len(string) - window_size:
@@ -29,7 +29,7 @@ def encode_lz77(string: str, window_size=100):
     return encoded
 
 
-def encode_lz78(string: str):
+def encode_lz78(string: list):
     codes = dict()
     substring = ''
     index = 0
@@ -47,7 +47,7 @@ def encode_lz78(string: str):
     return encoded
 
 
-def encode_lzw(string: str):
+def encode_lzw(string: list):
     codes = {c: i for i, c in enumerate('abcd')}
     index = 4
     encoded = f'{codes[string[0]]},{codes[string[1]]},'
@@ -62,5 +62,4 @@ def encode_lzw(string: str):
             encoded += str(codes[substring]) + ','
             substring = ''
 
-    print(codes)
     return encoded[:-1]

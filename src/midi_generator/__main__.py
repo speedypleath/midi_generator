@@ -1,12 +1,13 @@
 import argparse
 import logging
 
-from src.midi_generator.constants import DEFAULT_RATES
-
-from src.midi_generator.scale import Scale, match_key, match_mode
-from src.midi_generator.utils import powerset, NOTE_DURATIONS
-from src.midi_generator.config import Configuration, parse_config_for_generate
-from src.midi_generator.commands import generate, mutate, continue_sequence
+from .constants import DEFAULT_RATES
+from .scale import Scale, match_key, match_mode
+from .math import powerset
+from .constants import NOTE_DURATIONS
+from .config import Configuration
+from .parser import parse_config_for_generate
+from .commands import generate, mutate, continue_sequence
 
 
 class CustomParser(argparse.ArgumentDefaultsHelpFormatter):

@@ -11,4 +11,5 @@ class Configuration:
     rate: list[float] = field(default_factory=lambda: [1 / 4, 1 / 8])
     syncopation: float = 0.3
     scale: Scale = Scale(Key.C, Mode.MINOR)
-    is_polyphonic: bool = False
+    match: list[list[int]] = field(default=lambda: [])
+    compression_method: str = "LZ77"
