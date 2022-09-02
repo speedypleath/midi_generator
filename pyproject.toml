@@ -35,6 +35,6 @@ midi-generator = "midi_generator:print_cli"
 include-package-data = true
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
 include = ["*",]
 exclude = [".tests*"]

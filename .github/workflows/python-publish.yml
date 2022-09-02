@@ -23,6 +23,7 @@ jobs:
     - name: Build package
       run: |
         python -m build
+        pip3 install dist/*.whl
         rm dist/*.whl
     - name: Lint with flake8
       run: |

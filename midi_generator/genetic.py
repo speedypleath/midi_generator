@@ -1,6 +1,3 @@
-from typing import Tuple
-
-from .constants import POSSIBLE_NOTES
 from .syncopation import weighted_note_to_beat, density
 from .conversion import individual_to_melody, encodable
 from .compression import encode_lz77, encode_lz78, encode_lzw
