@@ -23,7 +23,7 @@ dependencies = [
     "midiutil",
     "deap",
     "pytest",
-    "pybind11"
+    "pybind11>=2.8"
 ]
 
 [project.scripts]
