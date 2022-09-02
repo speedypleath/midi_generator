@@ -1,6 +1,5 @@
-from pybind11.setup_helpers import Pybind11Extension
 from setuptools import setup
-from pybind11 import get_cmake_dir
+from pybind11.setup_helpers import Pybind11Extension
 
 ext_modules = [
     Pybind11Extension("note",
