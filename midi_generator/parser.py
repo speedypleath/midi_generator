@@ -1,8 +1,9 @@
 from io import TextIOWrapper
-from midi_generator.config import Configuration
+
 import configparser
 import logging
 
+from .config import Configuration
 from .types import Scale, Mode, Key
 
 

@@ -6,4 +6,7 @@ exclude =
     build,
     dist,
     .pytest_cache,
-    test
+    test,
+    setup.py,
+    pybind11,
+    lib

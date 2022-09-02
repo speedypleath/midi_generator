@@ -1,4 +1,4 @@
-from . import print_cli
+import cli
 
 if __name__ == '__main__':
-    print_cli()
+    cli.print_cli()
