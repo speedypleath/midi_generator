@@ -3,7 +3,7 @@ from midi_generator.config import Configuration
 import configparser
 import logging
 
-from src.midi_generator.scale import Scale, Mode, Key
+from .types import Scale, Mode, Key
 
 
 def parse_config_for_generate(config_file: TextIOWrapper) -> Configuration:

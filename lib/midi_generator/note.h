@@ -24,13 +24,7 @@ public:
         return !(rhs == *this);
     }
 
-    Note& operator=(const Note& note) {
-        pitch = note.pitch;
-        velocity = note.velocity;
-        start = note.start;
-        end = note.end;
-        return *this;
-    }
+    Note& operator=(const Note& note) = default;
 
     friend std::ostream& operator<<(std::ostream& os, const Note& note) {
         os << "Note(" << note.pitch << ", " << note.velocity << ", " << note.start << ", " << note.end << ")\n";

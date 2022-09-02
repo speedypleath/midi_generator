@@ -1,36 +1,15 @@
-import logging
 from note import Note
-from deap import tools
-from .genetic import ea_simple_with_elitism, generator, fitness, melody_to_individual, mutation, \
-    check_remaining_ticks, individual_to_melody, create_config
+
+from .conversion import encodable, melody_to_individual
+from .genetic import individual_to_melody, create_config, run_genetic_algorithm
 from .config import Configuration
 from midiutil import MIDIFile
-import numpy as np
 
 Sequence = list[Note]
 
 
 def generate(config=Configuration()) -> Sequence:
-    toolbox = create_config(config)
-
-    stats = tools.Statistics(lambda ind: ind.fitness.values)
-    stats.register("min", np.min)
-    stats.register("avg", np.mean)
-    stats.register("min_axis", np.min, axis=0)
-    stats.register("avg_axis", np.mean, axis=0)
-
-    population = toolbox.population(100)
-    hof = tools.HallOfFame(10)
-    population, logbook = ea_simple_with_elitism(population, toolbox, cxpb=0.4, mutpb=0.2,
-                                                 ngen=100, stats=stats, hall_of_fame=hof)
-
-    hof.update(population)
-    best = hof.items[0]
-    logging.info('-- Best Ever Individual = %s\n', best)
-    logging.info('-- Best Ever Fitness -- %s\n', best.fitness.values)
-
-    melody = individual_to_melody(best)
-    return melody
+    return run_genetic_algorithm(config)
 
 
 def mutate(sequence: Sequence, config=Configuration()) -> Sequence:
@@ -44,11 +23,16 @@ def mutate(sequence: Sequence, config=Configuration()) -> Sequence:
 
 
 def continue_sequence(sequence: Sequence, config=Configuration()) -> Sequence:
-    pass
+    config.match = [encodable(melody_to_individual(sequence))]
+    config.fitness_method = 'kolmogorov'
+
+    return run_genetic_algorithm(config)
 
 
-def combine(sequence: Sequence, config: Configuration = Configuration()) -> Sequence:
-    pass
+def combine(sequences: list[Sequence], config: Configuration = Configuration()) -> Sequence:
+    config.match = [encodable(melody_to_individual(sequence)) for sequence in sequences]
+    config.fitness_method = 'kolmogorov'
+    return run_genetic_algorithm(config)
 
 
 def write_file(notes: Sequence, path: str):

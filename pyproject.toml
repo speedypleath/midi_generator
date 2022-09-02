@@ -22,11 +22,12 @@ classifiers = [
 dependencies = [
     "midiutil",
     "deap",
-    "pytest"
+    "pytest",
+    "pybind11"
 ]
 
 [project.scripts]
-midi-generator = "midi_generator.print_cli"
+midi-generator = "midi_generator:print_cli"
 
 [project.urls]
 "Homepage" = "https://github.com/speedypleath/midi_generator"

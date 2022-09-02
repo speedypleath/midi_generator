@@ -84,3 +84,10 @@ def match_mode(mode: str):
         case 'locrian':
             return Mode.LOCRIAN
     logging.error(f'Invalid mode: {mode}')
+
+
+@dataclass
+class Gene:
+    pitch: int
+    velocity: int
+    remaining_ticks: int

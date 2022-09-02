@@ -1,17 +1,12 @@
+from pybind11.setup_helpers import Pybind11Extension
 from setuptools import setup
-from setuptools.extension import Extension
-import sys
+from pybind11 import get_cmake_dir
 
-if sys.platform == 'darwin':
-    from distutils import sysconfig
-    vars = sysconfig.get_config_vars()
-    vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
+ext_modules = [
+    Pybind11Extension("note",
+                      ["lib/midi_generator/pybind.cpp"],
+                      extra_compile_args=['-std=c++11']
+                      ),
+]
 
-extensions = Extension('note',
-                       sources=['src/lib/midi_generator/build.cpp'],
-                       include_dirs=['/opt/homebrew/include'],
-                       library_dirs=['/opt/homebrew/lib/lib'],
-                       runtime_library_dirs=['/opt/homebrew/lib'],
-                       libraries=['boost_python310'])
-
-setup(ext_modules=[extensions])
+setup(ext_modules=ext_modules)
