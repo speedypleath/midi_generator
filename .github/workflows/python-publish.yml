@@ -1,6 +1,11 @@
 name: Upload Python Package
 
-on: push
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v1.*
 
 permissions:
   contents: read
