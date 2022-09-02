@@ -34,7 +34,6 @@ classifiers = [
 dependencies = [
     "midiutil",
     "deap",
-    "pytest",
 ]
 
 [project.scripts]
