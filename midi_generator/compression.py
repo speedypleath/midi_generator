@@ -16,9 +16,8 @@ def encode_lz77(string: str, window_size=100):
                                     takewhile(lambda x: x[0] == x[1],
                                               zip_longest(string[i + j: i + window_size], input_buffer)
                                               )
-                                    )
-                                , '') for j in range(-window_size, 0)]
-                        , key=len)
+                                    ),
+                                '') for j in range(-window_size, 0)], key=len)
 
         if substring == '':
             i += 1

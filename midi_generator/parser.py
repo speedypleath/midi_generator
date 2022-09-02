@@ -10,7 +10,7 @@ def parse_config_for_generate(config_file: TextIOWrapper) -> Configuration:
     config = configparser.ConfigParser()
     config.read_file(config_file)
 
-    try: 
+    try:
         return Configuration(
             bars=int(config['generate']['bars']),
             density=float(config['generate']['density']),
