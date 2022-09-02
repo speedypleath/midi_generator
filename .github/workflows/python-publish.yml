@@ -26,6 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        /usr/local/bin/python -m pip pybind11 
         pip install build
         pip install pybind11
         sudo apt-get install python3-pybind11 pybind11-dev
