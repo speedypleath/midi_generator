@@ -1,4 +1,4 @@
 include README.md
 include LICENSE.txt
 include src/*.*
-include note.so
+include lib/midi_generator/*.*

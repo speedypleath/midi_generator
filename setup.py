@@ -4,6 +4,7 @@ from pybind11.setup_helpers import Pybind11Extension
 ext_modules = [
     Pybind11Extension("note",
                       ["lib/midi_generator/pybind.cpp"],
+                      include_dirs=['lib/midi_generator'],
                       extra_compile_args=['-std=c++11']
                       ),
 ]
