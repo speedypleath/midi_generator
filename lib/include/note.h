@@ -27,7 +27,7 @@ public:
     Note& operator=(const Note& note) = default;
 
     friend std::ostream& operator<<(std::ostream& os, const Note& note) {
-        os << "Note(" << note.pitch << ", " << note.velocity << ", " << note.start << ", " << note.end << ")\n";
+        os << "Note: key " << note.pitch << ", velocity " << note.velocity << ", start " << note.start << ", end " << note.end;
         return os;
     }
 };
