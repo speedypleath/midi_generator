@@ -36,7 +36,7 @@ def combine(sequences: list[Sequence], config: Configuration = Configuration()) 
 
 
 def write_file(notes: Sequence, path: str):
-    midi = MIDIFile(1)
+    midi = MIDIFile(1, file_format=2)
     midi.addTempo(0, 0, 120)
 
     for note in notes:
