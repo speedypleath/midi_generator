@@ -5,6 +5,7 @@
 #include <ostream>
 #include <list>
 #include <string>
+#include <algorithm>
 
 namespace midi_generator
 {
