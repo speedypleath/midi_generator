@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 project(midi_generator)
 
-find_package(Boost 1.79.0 REQUIRED COMPONENTS log unit_test_framework filesystem)
-
 add_subdirectory(pybind11)
 pybind11_add_module(note SHARED lib/pybind.cpp lib/API.cpp)
 
