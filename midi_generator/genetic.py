@@ -1,19 +1,19 @@
 from .syncopation import weighted_note_to_beat, density
 from .conversion import individual_to_melody, encodable
 from .compression import encode_lz77, encode_lz78, encode_lzw
-from .config import Configuration
+from note import Configuration
 from .types import Gene
 
 from itertools import takewhile
 from deap import base, creator, algorithms, tools
 
 import random
-import logging
 
 
-def fitness(genes: list[Gene]) -> tuple[float, float]:
+def fitness(config, genes: list[Gene]) -> tuple[float, float]:
     notes = individual_to_melody(genes)
-    return abs(weighted_note_to_beat(notes) - 0.35), abs(density(genes) - 0.8)
+    return min(1, 1 / abs(weighted_note_to_beat(notes) - config.syncopation)), \
+        min(100, 1 / abs(density(genes) - config.density))
 
 
 def fitness_kolmogorov(config, genes: list[Gene]) -> tuple[float]:
@@ -43,9 +43,9 @@ def generator(config=Configuration()):
             prev_gene = Gene(prev_gene.pitch, prev_gene.velocity, prev_gene.remaining_ticks - 1)
             return prev_gene
 
-        tick = min(config.rate)
-        duration = int(random.choice(config.rate) / tick)
-        key = random.choice(list(config.scale.notes)[30:40])
+        tick = 1 / config.rate
+        duration = int(tick * random.randint(1, 2))
+        key = random.choice(config.scale.consonant_notes)
         velocity = random.randint(80, 100)
         prev_gene = Gene(key, velocity, duration)
         return prev_gene
@@ -57,16 +57,23 @@ def mutation(config: Configuration, genes):
     for gene in genes:
         change = random.random()
         if change < config.pitch_change_rate:
-            # change_2 = random.random()
-            gene.pitch = random.choice(config.scale.notes[30:40])
-            # if change_2 > config.consonance_rate:
-            #     gene.pitch = random.choice(config.scale.notes[30:40])
-            # else:
-            #     gene.pitch = random.choice(list(set(POSSIBLE_NOTES) - set(config.scale.notes))[30:40])
+            change_2 = random.random()
+            gene.pitch = random.choice(config.scale.consonant_notes)
+            if change_2 > config.consonance:
+                gene.pitch = random.choice(config.scale.consonant_notes)
+            else:
+                gene.pitch = random.choice(config.scale.dissonant_notes)
 
         change = random.random()
         if change < config.length_change_rate:
             gene.remaining_ticks = 1
+
+        change = random.random()
+        if change < 0.1:
+            gene.pitch = 0
+            gene.velocity = 0
+            gene.remaining_ticks = 0
+
     return genes,
 
 
@@ -76,7 +83,7 @@ def check_remaining_ticks():
             offspring = func(*args, **kwargs)
             for genes in offspring:
                 for i, gene in enumerate(genes):
-                    if gene.remaining_ticks == 1:
+                    if gene.remaining_ticks <= 1:
                         continue
                     gene.remaining_ticks = len(list(takewhile(lambda x: x.pitch == gene.pitch, genes[i:])))
             return offspring
@@ -119,11 +126,11 @@ def create_config(config=Configuration()) -> base.Toolbox:
     toolbox.register("generator", generator())
 
     if config.fitness_method == 'kolmogorov':
-        toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.generator, n=32)
+        toolbox.register("individual", tools.initRepeat, creator.KolmogorovIndividual, toolbox.generator, n=32)
         toolbox.register("evaluate", fitness_kolmogorov, config)
     else:
-        toolbox.register("individual", tools.initRepeat, creator.KolmogorovIndividual, toolbox.generator, n=32)
-        toolbox.register("evaluate", fitness)
+        toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.generator, n=32)
+        toolbox.register("evaluate", fitness, config)
 
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("select", tools.selStochasticUniversalSampling)
@@ -146,8 +153,8 @@ def run_genetic_algorithm(config=Configuration()):
                                         ngen=100, hall_of_fame=hof)
     hof.update(population)
     best = hof.items[0]
-    logging.info('-- Best Ever Individual = %s\n', best)
-    logging.info('-- Best Ever Fitness -- %s\n', best.fitness.values)
+    print('-- Best Ever Individual = %s\n', best)
+    print('-- Best Ever Fitness -- %s\n', best.fitness.values)
 
     melody = individual_to_melody(best)
     return melody

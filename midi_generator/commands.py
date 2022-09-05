@@ -1,8 +1,7 @@
-from note import Note
+from note import Note, Configuration
 
 from .conversion import encodable, melody_to_individual
 from .genetic import individual_to_melody, create_config, run_genetic_algorithm
-from .config import Configuration
 from midiutil import MIDIFile
 
 Sequence = list[Note]

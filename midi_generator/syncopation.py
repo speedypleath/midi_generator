@@ -28,5 +28,5 @@ def off_beatness(notes: list[Note]) -> float:
     return sum(weights) / len(notes)
 
 
-def density(notes) -> float:
-    return len(list(filter(lambda note: note.velocity != 0, notes))) / len(notes)
+def density(genes) -> float:
+    return len(list(filter(lambda gene: gene.velocity > 0 and gene.velocity > 0, genes))) / len(genes)

@@ -1,5 +1,5 @@
 from midi_generator.commands import generate, mutate, continue_sequence, combine
-from midi_generator.config import Configuration
+from note import Configuration
 
 
 def test_generate():
