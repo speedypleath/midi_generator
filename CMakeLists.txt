@@ -12,12 +12,12 @@ set_target_properties(shared_library PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(shared_library PUBLIC lib/include ${Boost_INCLUDE_DIR})
 
 add_definitions(${Boost_DEFINITIONS})
-
-set_target_properties(shared_library PROPERTIES
-        FRAMEWORK TRUE
-        FRAMEWORK_VERSION C
-        MACOSX_DEPLOYMENT_TARGET 13.0)
-
+if(${MACOSX})
+    set_target_properties(shared_library PROPERTIES
+            FRAMEWORK TRUE
+            FRAMEWORK_VERSION C
+            MACOSX_DEPLOYMENT_TARGET 13.0)
+endif()
 set_property(TARGET shared_library PROPERTY CXX_STANDARD 11)
 
 set(CMAKE_CXX_STANDARD 11 CACHE STRING "C++ version selection")  # or 11, 14, 17, 20

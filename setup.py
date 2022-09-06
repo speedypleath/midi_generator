@@ -6,7 +6,6 @@ import sys
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 
-sys.setdlopenflags(os.RTLD_GLOBAL | os.RTLD_LAZY)
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
     "win32": "Win32",
@@ -96,6 +95,7 @@ class CMakeBuild(build_ext):
                 build_args += ["--config", cfg]
 
         if sys.platform.startswith("darwin"):
+            sys.setdlopenflags(os.RTLD_GLOBAL | os.RTLD_LAZY)
             # Cross-compile support for macOS - respect ARCHFLAGS if set
             archs = re.findall(r"-arch (\S+)", os.environ.get("ARCHFLAGS", ""))
             if archs:
