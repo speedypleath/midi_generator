@@ -51,6 +51,7 @@ PYBIND11_MODULE(note, m) {
             .def_readwrite("compression_method", &midi_generator::Configuration::compression_method)
             .def_readwrite("pitch_change_rate", &midi_generator::Configuration::pitch_change_rate)
             .def_readwrite("length_change_rate", &midi_generator::Configuration::length_change_rate)
+            .def_readwrite("consonance_rate", &midi_generator::Configuration::consonance_rate)
             .def_readwrite("match", &midi_generator::Configuration::match);
 
 #ifdef VERSION_INFO

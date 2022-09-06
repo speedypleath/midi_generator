@@ -30,3 +30,7 @@ def off_beatness(notes: list[Note]) -> float:
 
 def density(genes) -> float:
     return len(list(filter(lambda gene: gene.velocity > 0 and gene.velocity > 0, genes))) / len(genes)
+
+
+def consonance_ratio(genes, config) -> float:
+    return len(list(filter(lambda gene: gene.pitch in config.scale.consonant_notes, genes))) / len(genes)

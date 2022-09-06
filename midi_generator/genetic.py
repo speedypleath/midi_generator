@@ -1,4 +1,4 @@
-from .syncopation import weighted_note_to_beat, density
+from .syncopation import weighted_note_to_beat, density, consonance_ratio
 from .conversion import individual_to_melody, encodable
 from .compression import encode_lz77, encode_lz78, encode_lzw
 from note import Configuration
@@ -10,10 +10,11 @@ from deap import base, creator, algorithms, tools
 import random
 
 
-def fitness(config, genes: list[Gene]) -> tuple[float, float]:
+def fitness(config: Configuration, genes: list[Gene]) -> tuple[float, float, float]:
     notes = individual_to_melody(genes)
-    return min(1, 1 / abs(weighted_note_to_beat(notes) - config.syncopation)), \
-        min(100, 1 / abs(density(genes) - config.density))
+    return abs(weighted_note_to_beat(notes) - 5 * config.syncopation) / 5, \
+        abs(density(genes) - config.density), \
+        abs(consonance_ratio(genes, config) - config.consonance)
 
 
 def fitness_kolmogorov(config, genes: list[Gene]) -> tuple[float]:
@@ -59,7 +60,7 @@ def mutation(config: Configuration, genes):
         if change < config.pitch_change_rate:
             change_2 = random.random()
             gene.pitch = random.choice(config.scale.consonant_notes)
-            if change_2 > config.consonance:
+            if change_2 > config.consonance_rate:
                 gene.pitch = random.choice(config.scale.consonant_notes)
             else:
                 gene.pitch = random.choice(config.scale.dissonant_notes)
@@ -85,7 +86,8 @@ def check_remaining_ticks():
                 for i, gene in enumerate(genes):
                     if gene.remaining_ticks <= 1:
                         continue
-                    gene.remaining_ticks = len(list(takewhile(lambda x: x.pitch == gene.pitch, genes[i:])))
+                    gene.remaining_ticks = len(list(
+                        takewhile(lambda x: x.pitch == gene.pitch and x.pitch != 0, genes[i:])))
             return offspring
 
         return wrapper
@@ -133,7 +135,7 @@ def create_config(config=Configuration()) -> base.Toolbox:
         toolbox.register("evaluate", fitness, config)
 
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-    toolbox.register("select", tools.selStochasticUniversalSampling)
+    toolbox.register("select", tools.selNSGA2)
     toolbox.register("mutate", mutation, config)
     toolbox.register("mate", tools.cxOnePoint)
 

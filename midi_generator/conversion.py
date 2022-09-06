@@ -14,7 +14,8 @@ def individual_to_melody(individual: list[Gene]) -> list[Note]:
         if gene.remaining_ticks > 1:
             continue
 
-        notes.append(Note(int(gene.pitch), int(gene.velocity), start, time))
+        if gene.remaining_ticks != 0:
+            notes.append(Note(int(gene.pitch), int(gene.velocity), start, time))
         start = time
 
     return notes
