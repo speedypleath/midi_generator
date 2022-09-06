@@ -99,7 +99,8 @@ public:
 
 struct midi_generator::Configuration {
     double syncopation = 0.4f;
-    double density = 0.2f;
+    double density = 0.8f;
+
     double consonance = 0.8f;
     int bars = 4;
     double rate = 1.f / 4;
@@ -108,6 +109,7 @@ struct midi_generator::Configuration {
     double pitch_change_rate = 0.2f;
     double length_change_rate = 0.1f;
     double consonance_rate = 0.5f;
+
     std::list<std::string> match{};
     Scale scale = Scale(C, Phrygian);
 

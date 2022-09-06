@@ -60,6 +60,7 @@ def mutation(config: Configuration, genes):
         if change < config.pitch_change_rate:
             change_2 = random.random()
             gene.pitch = random.choice(config.scale.consonant_notes)
+
             if change_2 > config.consonance_rate:
                 gene.pitch = random.choice(config.scale.consonant_notes)
             else:
