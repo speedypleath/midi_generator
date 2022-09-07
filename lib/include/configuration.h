@@ -100,12 +100,14 @@ public:
 struct midi_generator::Configuration {
     double syncopation = 0.4f;
     double density = 0.8f;
+    int tempo = 120;
 
     double consonance = 0.8f;
     int bars = 4;
-    double rate = 1.f / 4;
+    double rate = 1.f / 8;
     std::string fitness_method = "normal";
     std::string compression_method = "LZ77";
+    std::string syncopation_algorithm = "WNBD";
     double pitch_change_rate = 0.2f;
     double length_change_rate = 0.1f;
     double consonance_rate = 0.5f;

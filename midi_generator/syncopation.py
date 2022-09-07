@@ -3,8 +3,6 @@ from math import floor
 
 
 def weighted_note_to_beat(notes: list[Note]) -> float:
-    if len(notes) < 5:
-        return -1
     total = 0
 
     for note in notes:
@@ -19,12 +17,25 @@ def weighted_note_to_beat(notes: list[Note]) -> float:
         else:
             total += 1 / distance
 
+    total /= 5
     return total / len(notes)
 
 
-def off_beatness(notes: list[Note]) -> float:
-    b = [x for x in filter(lambda i: len(notes) % i == 0, range(1, len(notes) + 1))]
-    weights = [0 if len(list(filter(lambda i: x % i == 0, b))) else 1 for x in notes]
+def generators(n):
+    s = set(range(1, n))
+    results = []
+    for a in s:
+        g = set()
+        for x in s:
+            g.add((a * x) % n)
+        if g == s:
+            results.append(a)
+    return results
+
+
+def off_beatness(notes: list[Note], ticks: int) -> float:
+    off_beats = generators(ticks)
+    weights = [1 if int(x.start * 2) in off_beats else 0 for x in notes]
     return sum(weights) / len(notes)
 
 

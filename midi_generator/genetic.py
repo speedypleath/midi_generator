@@ -1,4 +1,4 @@
-from .syncopation import weighted_note_to_beat, density, consonance_ratio
+from .syncopation import weighted_note_to_beat, density, consonance_ratio, off_beatness
 from .conversion import individual_to_melody, encodable
 from .compression import encode_lz77, encode_lz78, encode_lzw
 from note import Configuration
@@ -11,8 +11,10 @@ import random
 
 
 def fitness(config: Configuration, genes: list[Gene]) -> tuple[float, float, float]:
-    notes = individual_to_melody(genes)
-    return abs(weighted_note_to_beat(notes) - 5 * config.syncopation) / 5, \
+    notes = individual_to_melody(genes, config)
+    syncopation = weighted_note_to_beat(notes) if config.syncopation_method == "WNBD" \
+        else off_beatness(notes, len(genes))
+    return abs(syncopation - config.syncopation), \
         abs(density(genes) - config.density), \
         abs(consonance_ratio(genes, config) - config.consonance)
 
@@ -129,10 +131,12 @@ def create_config(config=Configuration()) -> base.Toolbox:
     toolbox.register("generator", generator())
 
     if config.fitness_method == 'kolmogorov':
-        toolbox.register("individual", tools.initRepeat, creator.KolmogorovIndividual, toolbox.generator, n=32)
+        toolbox.register("individual", tools.initRepeat, creator.KolmogorovIndividual, toolbox.generator,
+                         n=int(config.bars * (1 / config.rate)))
         toolbox.register("evaluate", fitness_kolmogorov, config)
     else:
-        toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.generator, n=32)
+        toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.generator,
+                         n=int(config.bars * (1 / config.rate)))
         toolbox.register("evaluate", fitness, config)
 
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
@@ -159,5 +163,5 @@ def run_genetic_algorithm(config=Configuration()):
     print('-- Best Ever Individual = %s\n', best)
     print('-- Best Ever Fitness -- %s\n', best.fitness.values)
 
-    melody = individual_to_melody(best)
+    melody = individual_to_melody(best, config)
     return melody

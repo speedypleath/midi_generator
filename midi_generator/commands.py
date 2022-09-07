@@ -12,24 +12,24 @@ def generate(config=Configuration()) -> Sequence:
 
 
 def mutate(sequence: Sequence, config=Configuration()) -> Sequence:
-    individual = melody_to_individual(sequence)
+    individual = melody_to_individual(sequence, config)
     toolbox = create_config(config)
 
     mutant = toolbox.clone(individual)
     ind, = toolbox.mutate(mutant)
-    melody = individual_to_melody(ind)
+    melody = individual_to_melody(ind, config)
     return melody
 
 
 def continue_sequence(sequence: Sequence, config=Configuration()) -> Sequence:
-    config.match = [encodable(melody_to_individual(sequence))]
+    config.match = [encodable(melody_to_individual(sequence, config))]
     config.fitness_method = 'kolmogorov'
 
     return run_genetic_algorithm(config)
 
 
 def combine(sequences: list[Sequence], config: Configuration = Configuration()) -> Sequence:
-    config.match = [encodable(melody_to_individual(sequence)) for sequence in sequences]
+    config.match = [encodable(melody_to_individual(sequence, config)) for sequence in sequences]
     config.fitness_method = 'kolmogorov'
     return run_genetic_algorithm(config)
 
