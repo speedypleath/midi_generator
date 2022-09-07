@@ -36,14 +36,15 @@ std::list<midi_generator::Note> midi_generator::generate(const midi_generator::C
         return {};
     }
 }
+
 std::list<midi_generator::Note> midi_generator::generate() {
     return midi_generator::generate(Configuration{});
 }
 
-std::list<midi_generator::Note> midi_generator::mutate(std::list<midi_generator::Note> notes) {
+std::list<midi_generator::Note> midi_generator::mutate(std::list<midi_generator::Note> notes, const midi_generator::Configuration& config) {
     try {
         py::module_ commands = py::module_::import("midi_generator.commands");
-        py::object result = commands.attr("mutate")(to_python_list(std::move(notes)));
+        py::object result = commands.attr("mutate")(to_python_list(std::move(notes)), config);
 
         std::list<midi_generator::Note> mutant;
         for(const auto& obj: result)
@@ -60,7 +61,11 @@ std::list<midi_generator::Note> midi_generator::mutate(std::list<midi_generator:
     }
 }
 
-std::list<midi_generator::Note> midi_generator::continue_sequence(std::list<midi_generator::Note> notes) {
+std::list<midi_generator::Note> midi_generator::mutate(const std::list<midi_generator::Note>& notes) {
+    return midi_generator::mutate(notes, Configuration{});
+}
+
+std::list<midi_generator::Note> midi_generator::continue_sequence(std::list<midi_generator::Note> notes, const midi_generator::Configuration& config) {
     try {
         py::module_ commands = py::module_::import("midi_generator.commands");
         py::object result = commands.attr("continue_sequence")(to_python_list(std::move(notes)));
@@ -81,13 +86,17 @@ std::list<midi_generator::Note> midi_generator::continue_sequence(std::list<midi
     }
 }
 
-std::list<midi_generator::Note> midi_generator::combine(const std::list<std::list<midi_generator::Note>>& sequences) {
+std::list<midi_generator::Note> midi_generator::continue_sequence(const std::list<midi_generator::Note>& notes) {
+    return midi_generator::continue_sequence(notes, Configuration{});
+}
+
+std::list<midi_generator::Note> midi_generator::combine(const std::list<std::list<Note>>& sequences, const midi_generator::Configuration& config) {
     try {
         py::module_ commands = py::module_::import("midi_generator.commands");
 
         py::list python_sequences;
-        for (const auto& sequence: sequences) {
-            python_sequences.append(to_python_list(sequence));
+        for (auto sequence: sequences) {
+            python_sequences.append(to_python_list(std::move(sequence)));
         }
 
         py::object result = commands.attr("combine")(python_sequences);
@@ -107,6 +116,10 @@ std::list<midi_generator::Note> midi_generator::combine(const std::list<std::lis
         std::cout << error.what();
         return {};
     }
+}
+
+std::list<midi_generator::Note> midi_generator::combine(const std::list<std::list<midi_generator::Note>>& sequences) {
+    return midi_generator::combine(sequences, Configuration{});
 }
 
 void midi_generator::save_file(std::list<midi_generator::Note> notes, const std::string& filename) {
