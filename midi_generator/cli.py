@@ -6,7 +6,7 @@ from itertools import chain, combinations
 from .constants import DEFAULT_RATES
 from .types import Scale, match_key, match_mode
 from .constants import NOTE_DURATIONS
-from .config import Configuration
+from note import Configuration
 from .parser import parse_config_for_generate
 from .commands import generate, mutate, continue_sequence
 
